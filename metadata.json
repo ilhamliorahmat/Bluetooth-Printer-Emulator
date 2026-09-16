@@ -1,0 +1,6 @@
+{
+  "name": "Virtual Printer",
+  "description": "An Android application that functions as a virtual Bluetooth printer, capable of receiving and displaying raw print data (such as ESC/POS).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
