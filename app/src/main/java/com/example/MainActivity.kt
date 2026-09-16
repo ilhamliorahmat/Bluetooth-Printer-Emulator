@@ -179,13 +179,36 @@ fun VirtualPrinterApp() {
                                         bytes = inputStream.read(buffer)
                                         if (bytes > 0) {
                                             val receivedData = buffer.copyOfRange(0, bytes)
-                                            // Phase 5 preparation: basic translation for now
-                                            val textData = String(receivedData)
+                                            
+                                            // Process for Text (filter out control characters for readability)
+                                            val textBuilder = StringBuilder()
+                                            for (byte in receivedData) {
+                                                val charCode = byte.toInt() and 0xFF
+                                                if (charCode in 32..126) {
+                                                    textBuilder.append(charCode.toChar())
+                                                } else if (charCode == 10 || charCode == 13) {
+                                                    textBuilder.append(charCode.toChar())
+                                                } else {
+                                                    textBuilder.append(".")
+                                                }
+                                            }
+                                            val textData = textBuilder.toString()
+                                            
+                                            // Process for Hex
                                             val hexData = receivedData.joinToString(" ") { "%02X".format(it) }
                                             
                                             withContext(Dispatchers.Main) {
-                                                printLogs.add("RX: $textData")
+                                                // If text contains newlines, split it for better log viewing
+                                                val lines = textData.split("\n", "\r\n").filter { it.isNotBlank() }
+                                                if (lines.isNotEmpty()) {
+                                                    lines.forEach { line ->
+                                                        printLogs.add("RX: $line")
+                                                    }
+                                                } else if (textData.isNotBlank()) {
+                                                    printLogs.add("RX: $textData")
+                                                }
                                                 printLogs.add("HEX: $hexData")
+                                                printLogs.add("-------------------------")
                                             }
                                         }
                                     } catch (e: IOException) {
