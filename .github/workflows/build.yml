@@ -31,8 +31,11 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
+    - name: Rename APK
+      run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/printer.apk
+
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: virtual-printer-app
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/printer.apk
